@@ -1,13 +1,3 @@
-The new code was pasted in the wrong spot and broke the script again. Let's do a clean full replacement of the entire file to fix everything at once.
-
-Go to github.com → vantage-assessment → index.html
-Click pencil to edit
-Ctrl + A to select everything
-Delete it all
-Paste this complete clean file:
-html
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -248,3 +238,280 @@ var SECTIONS = [
       {id:"communication", text:"How does your security team communicate during an event?", type:"multi", options:["Two-way radios with assigned channels","Mobile phones","Earpieces for key personnel","No formal communication system"]}
     ]
   },
+  {
+    id:"risk", label:"Risk Factors", icon:"◇", color:"#7B5EA7",
+    questions:[
+      {id:"public_profile", text:"How high profile are your events or venue?", type:"single", options:["Private - limited public exposure","Local - known in the community","Regional - significant local media attention","National or international - major public profile"]},
+      {id:"vip_presence", text:"Do your events include VIP guests or public figures?", type:"single", options:["Never","Occasionally","Frequently","Always"]},
+      {id:"risk_factors", text:"Which of the following risk factors apply?", type:"multi", options:["Alcohol served on-site","Large crowds in confined spaces","Late night or overnight events","History of incidents at similar events","Political or controversial programming","High-value equipment or assets on-site","None of the above"]},
+      {id:"biggest_concern", text:"What is your biggest security concern right now?", type:"single", options:["Crowd safety and management","Unauthorized access or gate crashing","Patron altercations or violence","Medical emergencies","Theft or property damage","Not sure where to start"]}
+    ]
+  }
+];
+
+var currentSection = 0;
+var answers = {};
+
+function showPage(id) {
+  document.getElementById("page-hero").classList.add("hidden");
+  document.getElementById("page-assessment").classList.add("hidden");
+  document.getElementById("page-results").classList.add("hidden");
+  document.getElementById(id).classList.remove("hidden");
+}
+
+function startAssessment() {
+  currentSection = 0;
+  answers = {};
+  showPage("page-assessment");
+  renderSection();
+}
+
+function restartAssessment() {
+  currentSection = 0;
+  answers = {};
+  showPage("page-hero");
+}
+
+function renderSection() {
+  var section = SECTIONS[currentSection];
+  var totalQ = SECTIONS.reduce(function(a,s){ return a + s.questions.length; }, 0);
+  var answeredQ = Object.keys(answers).length;
+  var pct = Math.round((answeredQ / totalQ) * 100);
+
+  document.getElementById("progress-pct").textContent = pct + "%";
+  document.getElementById("progress-fill").style.width = pct + "%";
+  document.getElementById("section-num").textContent = "SECTION " + (currentSection+1) + " OF " + SECTIONS.length;
+  document.getElementById("section-title").textContent = section.label;
+  document.getElementById("section-title").style.color = section.color;
+  document.getElementById("section-line").style.background = section.color;
+
+  var tabs = document.getElementById("section-tabs");
+  tabs.innerHTML = SECTIONS.map(function(s,i) {
+    var isDone = s.questions.every(function(q){ return answers[q.id]; });
+    var isActive = i === currentSection;
+    var cls = "section-tab" + (isActive ? " active" : "") + (isDone && !isActive ? " done" : "");
+    return '<div class="' + cls + '" style="--tab-color:' + s.color + '">' + (isDone && !isActive ? "✓" : s.icon) + " " + s.label + "</div>";
+  }).join("");
+
+  var qList = document.getElementById("questions-list");
+  qList.innerHTML = section.questions.map(function(q) {
+    var sel = answers[q.id] || [];
+    var selArr = Array.isArray(sel) ? sel : [sel];
+    return '<div class="question-card">' +
+      '<div class="question-type-tag">' + (q.type === "multi" ? "◻ Select all that apply" : "◉ Select one") + "</div>" +
+      '<div class="question-text">' + q.text + "</div>" +
+      '<div class="options-grid">' +
+      q.options.map(function(opt) {
+        var isSel = selArr.indexOf(opt) > -1;
+        return '<button class="option-btn' + (isSel ? " selected" : "") + '" style="' + (isSel ? "border-color:" + section.color : "") + '" onclick="toggleAnswer(\'' + q.id + "','" + opt.replace(/'/g,"\\'") + "','" + q.type + "','" + section.color + '\')">' +
+          '<span class="option-indicator' + (q.type === "single" ? " circle" : "") + '">' + (isSel ? "✓" : "") + "</span>" +
+          opt + "</button>";
+      }).join("") +
+      "</div></div>";
+  }).join("");
+
+  var canNext = section.questions.every(function(q){
+    return answers[q.id] && (Array.isArray(answers[q.id]) ? answers[q.id].length > 0 : true);
+  });
+  document.getElementById("btn-next").disabled = !canNext;
+  document.getElementById("btn-prev").style.visibility = currentSection === 0 ? "hidden" : "visible";
+  document.getElementById("btn-next").textContent = currentSection === SECTIONS.length - 1 ? "Generate Report →" : "Continue →";
+}
+
+function toggleAnswer(qid, option, type, color) {
+  if (type === "single") {
+    answers[qid] = option;
+  } else {
+    var cur = answers[qid] || [];
+    var has = cur.indexOf(option) > -1;
+    if (option === "None" && !has) {
+      answers[qid] = ["None"];
+    } else {
+      var filtered = has ? cur.filter(function(x){ return x !== option; }) : cur.filter(function(x){ return x !== "None"; }).concat([option]);
+      answers[qid] = filtered.length ? filtered : null;
+    }
+  }
+  renderSection();
+}
+
+function prevSection() {
+  if (currentSection > 0) { currentSection--; renderSection(); }
+}
+
+function nextSection() {
+  var section = SECTIONS[currentSection];
+  var canNext = section.questions.every(function(q){
+    return answers[q.id] && (Array.isArray(answers[q.id]) ? answers[q.id].length > 0 : true);
+  });
+  if (!canNext) return;
+  if (currentSection < SECTIONS.length - 1) {
+    currentSection++;
+    renderSection();
+  } else {
+    showResults();
+  }
+}
+
+function scoreAssessment() {
+  var risks = { planning:0, physical:0, emergency:0, overall:0 };
+  var ac = answers.access_control || [];
+  var surv = answers.surveillance || [];
+  var peri = answers.perimeter || [];
+  var inc = answers.incidents || "";
+  if (ac.indexOf("None") > -1) risks.physical += 30;
+  else if (ac.indexOf("Ticket scanning at entry") === -1 && ac.indexOf("Wristband or credential system") === -1 && ac.indexOf("Security personnel at entry points") === -1) risks.physical += 15;
+  if (surv.indexOf("None") > -1) risks.physical += 25;
+  if (peri.indexOf("Open or unsecured") > -1) risks.physical += 20;
+  if (inc.indexOf("Serious") > -1) risks.physical += 25;
+  else if (inc.indexOf("Moderate") > -1) risks.physical += 15;
+  else if (inc.indexOf("Minor") > -1) risks.physical += 5;
+  if (answers.security_provider === "We have no security personnel") risks.planning += 35;
+  if (answers.security_management === "Nobody specifically assigned") risks.planning += 25;
+  var pe = answers.planning_elements || [];
+  if (pe.indexOf("None of the above") > -1) risks.planning += 30;
+  else if (pe.indexOf("Written security plan") === -1) risks.planning += 15;
+  if (answers.authorities === "No - we handle everything internally") risks.planning += 10;
+  if (answers.emergency_plan === "No plan exists") risks.emergency += 40;
+  else if (answers.emergency_plan === "Informal - not written down") risks.emergency += 20;
+  if (answers.evacuation === "No evacuation plan exists") risks.emergency += 25;
+  if ((answers.medical || []).indexOf("None") > -1) risks.emergency += 20;
+  if ((answers.communication || []).indexOf("No formal communication system") > -1) risks.emergency += 15;
+  risks.physical = Math.min(risks.physical, 100);
+  risks.planning = Math.min(risks.planning, 100);
+  risks.emergency = Math.min(risks.emergency, 100);
+  risks.overall = Math.round((risks.physical + risks.planning + risks.emergency) / 3);
+  return risks;
+}
+
+function getRiskLabel(score) {
+  if (score >= 70) return { label:"HIGH RISK", color:"#E05C3A" };
+  if (score >= 40) return { label:"MODERATE RISK", color:"#E0A03A" };
+  return { label:"LOW RISK", color:"#4CAF7D" };
+}
+
+function getRecommendations(scores) {
+  var recs = [];
+  if (scores.physical >= 40) {
+    if ((answers.access_control||[]).indexOf("None") > -1) recs.push({area:"Physical",priority:"High",text:"Implement a formal access control system at all entry points — ticket scanning, wristbands, and credential verification are essential baselines for any event."});
+    if ((answers.surveillance||[]).indexOf("None") > -1) recs.push({area:"Physical",priority:"High",text:"Install CCTV coverage at all entry, exit, and high-density areas. Monitored surveillance is one of the most effective deterrents available."});
+    if ((answers.perimeter||[]).indexOf("Open or unsecured") > -1) recs.push({area:"Physical",priority:"High",text:"Establish a defined event perimeter using barriers, fencing, and patrol routes. An unsecured perimeter creates significant liability."});
+    if (answers.incidents && answers.incidents.indexOf("Serious") > -1) recs.push({area:"Physical",priority:"High",text:"Given the history of serious incidents, a full security audit is strongly recommended before your next event."});
+  }
+  if (scores.planning >= 30) {
+    if (answers.security_provider === "We have no security personnel") recs.push({area:"Planning",priority:"High",text:"Engage a licensed security company for all events. Unprotected events expose organizers to significant legal and safety liability."});
+    if (answers.security_management === "Nobody specifically assigned") recs.push({area:"Planning",priority:"High",text:"Assign a dedicated security manager or consultant for every event. Without clear command structure, security cannot operate effectively."});
+    if ((answers.planning_elements||[]).indexOf("None of the above") > -1) recs.push({area:"Planning",priority:"High",text:"Develop a written security plan before your next event. This is required by most insurers, municipal permits, and professional guard companies."});
+    if ((answers.planning_elements||[]).indexOf("Pre-event security briefing for staff") === -1) recs.push({area:"Planning",priority:"Medium",text:"Conduct a formal pre-event security briefing with all staff and security personnel to align on assignments and emergency procedures."});
+  }
+  if (scores.emergency >= 30) {
+    if (answers.emergency_plan === "No plan exists" || answers.emergency_plan === "Informal - not written down") recs.push({area:"Emergency",priority:"High",text:"Develop a written emergency response plan covering medical emergencies, evacuation, fire, and active threat scenarios."});
+    if (answers.evacuation === "No evacuation plan exists" || answers.evacuation === "Only management knows") recs.push({area:"Emergency",priority:"High",text:"Train all staff and security personnel on evacuation procedures. Every person needs to know exactly what to do without being told."});
+    if ((answers.medical||[]).indexOf("None") > -1) recs.push({area:"Emergency",priority:"High",text:"Establish minimum first aid capability — trained staff, first aid kits at multiple locations, and a clearly marked medical station."});
+    if ((answers.communication||[]).indexOf("No formal communication system") > -1) recs.push({area:"Emergency",priority:"High",text:"Implement a two-way radio system with assigned channels. Clear communication is the foundation of effective security operations."});
+  }
+  if ((answers.threat_awareness||"").indexOf("No plan") > -1) recs.push({area:"Strategy",priority:"High",text:"Commission a professional security risk assessment to establish a baseline and build a formal security plan tailored to your events and venue."});
+  if (answers.vip_presence === "Frequently" || answers.vip_presence === "Always") recs.push({area:"Planning",priority:"Medium",text:"Events featuring VIP guests or public figures require dedicated access control and on-site security management. Standard guard coverage is not sufficient."});
+  return recs;
+}
+
+function showResults() {
+  var scores = scoreAssessment();
+  var overall = getRiskLabel(scores.overall);
+  var recs = getRecommendations(scores);
+  var now = new Date().toLocaleDateString("en-CA",{year:"numeric",month:"long",day:"numeric"});
+
+  document.getElementById("results-meta").innerHTML =
+    '<span class="meta-item">GENERATED: ' + now + '</span>' +
+    '<span class="meta-item">SECTIONS ASSESSED: 5</span>' +
+    '<span class="meta-item">RECOMMENDATIONS: ' + recs.length + '</span>';
+
+  var circ = 2 * Math.PI * 55;
+  var fill = (scores.overall / 100) * circ;
+  document.getElementById("ring-fill").setAttribute("stroke", overall.color);
+  document.getElementById("ring-fill").setAttribute("stroke-dasharray", fill + " " + circ);
+  document.getElementById("score-big").textContent = scores.overall;
+  document.getElementById("score-big").style.color = overall.color;
+  document.getElementById("overall-label").textContent = "Overall: " + overall.label;
+  document.getElementById("overall-label").style.color = overall.color;
+  document.getElementById("overall-desc").textContent = scores.overall >= 70
+    ? "Significant security gaps exist across multiple areas. Immediate professional consultation is strongly recommended."
+    : scores.overall >= 40
+    ? "Moderate risk levels indicate meaningful security gaps. A structured improvement plan should be developed and prioritized."
+    : "Your current security posture shows a reasonable baseline. Continued review and optimization will maintain your protection.";
+
+  var areas = [
+    {label:"Physical Security", icon:"⬡", score:scores.physical, color:"#E05C3A"},
+    {label:"Security Planning", icon:"◎", score:scores.planning, color:"#4A90D9"},
+    {label:"Emergency Readiness", icon:"△", score:scores.emergency, color:"#E0A03A"}
+  ];
+
+  document.getElementById("risk-grid").innerHTML = areas.map(function(a) {
+    var rl = getRiskLabel(a.score);
+    return '<div class="risk-card">' +
+      '<div class="risk-card-header"><span style="color:' + a.color + ';font-size:1rem">' + a.icon + '</span><span class="risk-card-label">' + a.label + '</span></div>' +
+      '<div class="risk-score-num" style="color:' + a.color + '">' + a.score + '</div>' +
+      '<div class="risk-badge" style="color:' + rl.color + ';border-color:' + rl.color + '">' + rl.label + '</div>' +
+      '<div class="risk-bar-track"><div class="risk-bar-fill" style="width:' + a.score + '%;background:' + a.color + '"></div></div>' +
+      '</div>';
+  }).join("");
+
+  document.getElementById("recs-list").innerHTML = recs.length === 0
+    ? '<p style="color:rgba(232,228,220,0.4);font-style:italic">No critical gaps identified. Continue regular security reviews.</p>'
+    : recs.map(function(r) {
+        var color = r.priority === "High" ? "#E05C3A" : r.priority === "Medium" ? "#E0A03A" : "#4A90D9";
+        return '<div class="rec-item" style="border-color:' + color + '">' +
+          '<div class="rec-meta"><div class="rec-area">' + r.area + '</div><div class="rec-priority" style="color:' + color + '">' + r.priority + '</div></div>' +
+          '<div class="rec-text">' + r.text + '</div></div>';
+      }).join("");
+
+  showPage("page-results");
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  document.getElementById("btn-start").addEventListener("click", startAssessment);
+  document.getElementById("btn-prev").addEventListener("click", prevSection);
+  document.getElementById("btn-next").addEventListener("click", nextSection);
+  document.getElementById("btn-restart").addEventListener("click", restartAssessment);
+
+  document.getElementById("contact-form").addEventListener("submit", function(e) {
+    e.preventDefault();
+    var scores = scoreAssessment();
+    var overall = getRiskLabel(scores.overall);
+    var recs = getRecommendations(scores);
+    var recText = recs.map(function(r){ return "[" + r.priority + " - " + r.area + "] " + r.text; }).join("\n\n");
+    var name = document.getElementById("f-name").value;
+    var org = document.getElementById("f-org").value;
+    var email = document.getElementById("f-email").value;
+    var phone = document.getElementById("f-phone").value || "Not provided";
+
+    fetch(FORMSPREE_ENDPOINT, {
+      method:"POST",
+      headers:{"Content-Type":"application/json","Accept":"application/json"},
+      body: JSON.stringify({
+        name: name,
+        organization: org,
+        email: email,
+        phone: phone,
+        overall_score: scores.overall + "/100",
+        overall_risk: overall.label,
+        physical_score: scores.physical + "/100",
+        planning_score: scores.planning + "/100",
+        emergency_score: scores.emergency + "/100",
+        biggest_concern: answers.biggest_concern || "Not specified",
+        org_type: answers.org_type || "Not specified",
+        recommendations: recText,
+        _subject: "Vantage Risk Assessment - " + org + " - Score: " + scores.overall + "/100"
+      })
+    }).then(function(response) {
+      return response.json();
+    }).then(function(data) {
+      document.getElementById("form-container").classList.add("hidden");
+      document.getElementById("form-success").classList.remove("hidden");
+    }).catch(function(err) {
+      alert("Submission error. Please email us directly at contact@vantagesecurityconsulting.com");
+    });
+  });
+});
+</script>
+</body>
+</html>
