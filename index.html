@@ -1,3 +1,13 @@
+The new code was pasted in the wrong spot and broke the script again. Let's do a clean full replacement of the entire file to fix everything at once.
+
+Go to github.com → vantage-assessment → index.html
+Click pencil to edit
+Ctrl + A to select everything
+Delete it all
+Paste this complete clean file:
+html
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +18,6 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:#0D1117;color:#E8E4DC;font-family:'Montserrat',sans-serif;min-height:100vh}
-.app{min-height:100vh;background:#0D1117}
 .header{border-bottom:1px solid rgba(201,168,76,0.2);padding:1.5rem 2.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(13,17,23,0.97);backdrop-filter:blur(12px);z-index:100}
 .logo{display:flex;align-items:baseline;gap:0.75rem}
 .logo-name{font-size:1.6rem;font-weight:800;letter-spacing:0.2em;color:#C9A84C;line-height:1}
@@ -90,8 +99,8 @@ body{background:#0D1117;color:#E8E4DC;font-family:'Montserrat',sans-serif;min-he
 .form-grid{display:flex;flex-direction:column;gap:0.75rem;max-width:480px}
 .form-input{padding:0.75rem 1rem;background:transparent;border:1px solid rgba(232,228,220,0.15);border-left:3px solid #C9A84C;color:#E8E4DC;font-family:'Montserrat',sans-serif;font-size:0.85rem;outline:none;width:100%}
 .success-box{padding:1.5rem;border:1px solid #C9A84C;background:rgba(201,168,76,0.05);max-width:480px}
-.success-box p:first-child{font-size:0.9rem;color:#C9A84C;font-weight:700;margin-bottom:0.5rem}
-.success-box p:last-child{font-size:0.85rem;color:rgba(232,228,220,0.6);line-height:1.7}
+.success-title{font-size:0.9rem;color:#C9A84C;font-weight:700;margin-bottom:0.5rem}
+.success-msg{font-size:0.85rem;color:rgba(232,228,220,0.6);line-height:1.7}
 .hidden{display:none}
 @media(max-width:640px){
   .risk-grid{grid-template-columns:1fr}
@@ -104,404 +113,138 @@ body{background:#0D1117;color:#E8E4DC;font-family:'Montserrat',sans-serif;min-he
 </style>
 </head>
 <body>
-<div class="app">
-  <header class="header">
-    <div class="logo">
-      <div class="logo-name">VANTAGE</div>
-      <div class="logo-sep"></div>
-      <div class="logo-tag">Free Security Risk Assessment</div>
+<header class="header">
+  <div class="logo">
+    <div class="logo-name">VANTAGE</div>
+    <div class="logo-sep"></div>
+    <div class="logo-tag">Free Security Risk Assessment</div>
+  </div>
+  <div class="header-right">Vantage Security Consulting</div>
+</header>
+<div id="page-hero">
+  <div class="hero">
+    <div class="hero-eyebrow">&#9672; Vantage Security Consulting</div>
+    <h1 class="hero-title">Know Your<br><span>Risk Profile</span></h1>
+    <p class="hero-desc">A free comprehensive security assessment across physical security, security planning, and emergency readiness — tailored for your specific event or venue.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">5</div><div class="stat-label">Assessment Sections</div></div>
+      <div class="stat"><div class="stat-num">20</div><div class="stat-label">Risk Indicators</div></div>
+      <div class="stat"><div class="stat-num">~8</div><div class="stat-label">Minutes to Complete</div></div>
     </div>
-    <div class="header-right">Vantage Security Consulting</div>
-  </header>
-  <!-- HERO PAGE -->
-  <div id="page-hero">
-    <div class="hero">
-      <div class="hero-eyebrow">&#9672; Vantage Security Consulting</div>
-      <h1 class="hero-title">Know Your<br><span>Risk Profile</span></h1>
-      <p class="hero-desc">A free comprehensive security assessment across physical security, security planning, and emergency readiness — tailored for your specific event or venue.</p>
-      <div class="hero-stats">
-        <div class="stat"><div class="stat-num">5</div><div class="stat-label">Assessment Sections</div></div>
-        <div class="stat"><div class="stat-num">20</div><div class="stat-label">Risk Indicators</div></div>
-        <div class="stat"><div class="stat-num">~8</div><div class="stat-label">Minutes to Complete</div></div>
+    <button class="btn-primary" id="btn-start">Begin Assessment &#8594;</button>
+  </div>
+</div>
+<div id="page-assessment" class="hidden">
+  <div class="assessment">
+    <div class="progress-bar-wrap">
+      <div class="progress-meta">
+        <span class="progress-label">Assessment Progress</span>
+        <span class="progress-pct" id="progress-pct">0%</span>
       </div>
-      <button class="btn-primary" onclick="startAssessment()">Begin Assessment &rarr;</button>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div class="section-tabs" id="section-tabs"></div>
+    <div class="section-header">
+      <div class="section-num" id="section-num"></div>
+      <div class="section-title" id="section-title"></div>
+      <div class="section-line" id="section-line"></div>
+    </div>
+    <div class="questions-list" id="questions-list"></div>
+    <div class="nav-row">
+      <button class="btn-ghost" id="btn-prev">&#8592; Previous</button>
+      <button class="btn-primary" id="btn-next">Continue &#8594;</button>
     </div>
   </div>
-  <!-- ASSESSMENT PAGE -->
-  <div id="page-assessment" class="hidden">
-    <div class="assessment">
-      <div class="progress-bar-wrap">
-        <div class="progress-meta">
-          <span class="progress-label">Assessment Progress</span>
-          <span class="progress-pct" id="progress-pct">0%</span>
+</div>
+<div id="page-results" class="hidden">
+  <div class="results">
+    <div class="results-header">
+      <div class="results-eyebrow">&#9672; Assessment Complete &#8212; Confidential Report</div>
+      <div class="results-title">Security Risk Report</div>
+      <div class="results-meta" id="results-meta"></div>
+    </div>
+    <div class="overall-card">
+      <div class="overall-score-ring">
+        <svg width="120" height="120" style="transform:rotate(-90deg)">
+          <circle cx="60" cy="60" r="55" fill="none" stroke="rgba(232,228,220,0.06)" stroke-width="5"/>
+          <circle id="ring-fill" cx="60" cy="60" r="55" fill="none" stroke="#C9A84C" stroke-width="5" stroke-dasharray="0 345.4"/>
+        </svg>
+        <div class="overall-score-num">
+          <div class="score-big" id="score-big">0</div>
+          <div class="score-denom">/100</div>
         </div>
-        <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
       </div>
-      <div class="section-tabs" id="section-tabs"></div>
-      <div class="section-header">
-        <div class="section-num" id="section-num"></div>
-        <div class="section-title" id="section-title"></div>
-        <div class="section-line" id="section-line"></div>
-      </div>
-      <div class="questions-list" id="questions-list"></div>
-      <div class="nav-row">
-        <button class="btn-ghost" id="btn-prev" onclick="prevSection()">&#8592; Previous</button>
-        <button class="btn-primary" id="btn-next" onclick="nextSection()">Continue &rarr;</button>
+      <div class="overall-info">
+        <h3 id="overall-label"></h3>
+        <p id="overall-desc"></p>
       </div>
     </div>
-  </div>
-  <!-- RESULTS PAGE -->
-  <div id="page-results" class="hidden">
-    <div class="results">
-      <div class="results-header">
-        <div class="results-eyebrow">&#9672; Assessment Complete &mdash; Confidential Report</div>
-        <div class="results-title">Security Risk Report</div>
-        <div class="results-meta" id="results-meta"></div>
+    <div class="risk-grid" id="risk-grid"></div>
+    <div class="recs-section">
+      <div class="recs-title">Recommendations</div>
+      <div class="recs-sub">Prioritized action items based on your assessment responses</div>
+      <div id="recs-list"></div>
+    </div>
+    <div class="cta-section">
+      <div class="cta-text">
+        <h4>Get Your Full Security Consultation</h4>
+        <p>Enter your details and we will be in touch within 24 hours to discuss your results.</p>
       </div>
-      <div class="overall-card" id="overall-card">
-        <div class="overall-score-ring">
-          <svg id="ring-svg" width="120" height="120" style="transform:rotate(-90deg)">
-            <circle cx="60" cy="60" r="55" fill="none" stroke="rgba(232,228,220,0.06)" stroke-width="5"/>
-            <circle id="ring-fill" cx="60" cy="60" r="55" fill="none" stroke="#C9A84C" stroke-width="5" stroke-dasharray="0 345.4"/>
-          </svg>
-          <div class="overall-score-num">
-            <div class="score-big" id="score-big">0</div>
-            <div class="score-denom">/100</div>
-          </div>
-        </div>
-        <div class="overall-info">
-          <h3 id="overall-label"></h3>
-          <p id="overall-desc"></p>
-        </div>
+      <div id="form-container">
+        <form class="form-grid" id="contact-form">
+          <input class="form-input" type="text" id="f-name" placeholder="Your Name *" required>
+          <input class="form-input" type="text" id="f-org" placeholder="Organization / Event Name *" required>
+          <input class="form-input" type="email" id="f-email" placeholder="Email Address *" required>
+          <input class="form-input" type="tel" id="f-phone" placeholder="Phone (Optional)">
+          <button type="submit" class="btn-primary">Send Me My Results &#8594;</button>
+        </form>
       </div>
-      <div class="risk-grid" id="risk-grid"></div>
-      <div class="recs-section">
-        <div class="recs-title">Recommendations</div>
-        <div class="recs-sub">Prioritized action items based on your assessment responses</div>
-        <div id="recs-list"></div>
+      <div id="form-success" class="success-box hidden">
+        <div class="success-title">&#10003; RECEIVED</div>
+        <div class="success-msg">Thank you. We will review your assessment and be in touch within 24 hours.</div>
       </div>
-      <div class="cta-section">
-        <div class="cta-text">
-          <h4>Get Your Full Security Consultation</h4>
-          <p>Enter your details below and we will be in touch within 24 hours to discuss your results and how Vantage can help.</p>
-        </div>
-        <div id="form-container">
-          <form class="form-grid" onsubmit="submitForm(event)">
-            <input class="form-input" type="text" id="f-name" placeholder="Your Name *" required>
-            <input class="form-input" type="text" id="f-org" placeholder="Organization / Event Name *" required>
-            <input class="form-input" type="email" id="f-email" placeholder="Email Address *" required>
-            <input class="form-input" type="tel" id="f-phone" placeholder="Phone (Optional)">
-            <button type="submit" class="btn-primary">Send Me My Results &rarr;</button>
-          </form>
-        </div>
-        <div id="form-success" class="success-box hidden">
-          <p>&#10003; RECEIVED</p>
-          <p>Thank you. We will review your assessment and be in touch within 24 hours.</p>
-        </div>
-      </div>
-      <div style="text-align:center;margin-top:2rem">
-        <button class="btn-ghost" onclick="restartAssessment()">Retake Assessment</button>
-      </div>
+    </div>
+    <div style="text-align:center;margin-top:2rem">
+      <button class="btn-ghost" id="btn-restart">Retake Assessment</button>
     </div>
   </div>
 </div>
 <script>
-const FORMSPREE = "[formspree.io](https://formspree.io/f/maqzwwre)";
-const SECTIONS = [
+var FORMSPREE_ENDPOINT = ["[formspree.io](https://formspree.io)", "f", "maqzwwre"].join("/");
+var SECTIONS = [
   {
-    id:"profile",label:"Client Profile",icon:"◈",color:"#C9A84C",
+    id:"profile", label:"Client Profile", icon:"◈", color:"#C9A84C",
     questions:[
-      {id:"org_type",text:"What type of organization are you?",type:"single",options:["Festival or Live Event Organizer","Concert or Entertainment Promoter","Sports Organization or Venue","Corporate Event Organizer","Venue or Arena Operator","Municipal or Government Organization","Other"]},
-      {id:"size",text:"How many people attend your typical event or use your venue?",type:"single",options:["Under 100","100-500","500-2,000","2,000-10,000","10,000+"]},
-      {id:"frequency",text:"How often do you host events or operate your venue?",type:"single",options:["One-time event","A few times per year","Monthly","Weekly or more","Ongoing permanent venue"]},
-      {id:"threat_awareness",text:"Do you currently have a written security plan?",type:"single",options:["No plan at all","Basic informal plan","Documented but outdated","Current and reviewed regularly"]}
+      {id:"org_type", text:"What type of organization are you?", type:"single", options:["Festival or Live Event Organizer","Concert or Entertainment Promoter","Sports Organization or Venue","Corporate Event Organizer","Venue or Arena Operator","Municipal or Government Organization","Other"]},
+      {id:"size", text:"How many people attend your typical event or use your venue?", type:"single", options:["Under 100","100-500","500-2,000","2,000-10,000","10,000+"]},
+      {id:"frequency", text:"How often do you host events or operate your venue?", type:"single", options:["One-time event","A few times per year","Monthly","Weekly or more","Ongoing permanent venue"]},
+      {id:"threat_awareness", text:"Do you currently have a written security plan?", type:"single", options:["No plan at all","Basic informal plan","Documented but outdated","Current and reviewed regularly"]}
     ]
   },
   {
-    id:"physical",label:"Physical Security",icon:"⬡",color:"#E05C3A",
+    id:"physical", label:"Physical Security", icon:"⬡", color:"#E05C3A",
     questions:[
-      {id:"access_control",text:"What access control measures are currently in place at your event or venue?",type:"multi",options:["Ticket scanning at entry","Wristband or credential system","Dedicated VIP or restricted area access","Security personnel at entry points","Bag search or screening","None"]},
-      {id:"surveillance",text:"What surveillance systems do you have in place?",type:"multi",options:["CCTV cameras on-site","Monitored CCTV during events","Security lighting","Alarm systems","None"]},
-      {id:"perimeter",text:"How is your event perimeter or venue exterior managed?",type:"multi",options:["Fencing or barriers","Security guards on patrol","Vehicle access control","Crowd control barriers at stage or key areas","Open or unsecured"]},
-      {id:"incidents",text:"Have you experienced any security incidents at your events or venue in the past 2 years?",type:"single",options:["No incidents","Minor incidents (disturbances, trespass)","Moderate incidents (assault, ejections)","Serious incidents (violence, medical emergency, police response)","Prefer not to say"]}
+      {id:"access_control", text:"What access control measures are currently in place?", type:"multi", options:["Ticket scanning at entry","Wristband or credential system","Dedicated VIP or restricted area access","Security personnel at entry points","Bag search or screening","None"]},
+      {id:"surveillance", text:"What surveillance systems do you have in place?", type:"multi", options:["CCTV cameras on-site","Monitored CCTV during events","Security lighting","Alarm systems","None"]},
+      {id:"perimeter", text:"How is your event perimeter or venue exterior managed?", type:"multi", options:["Fencing or barriers","Security guards on patrol","Vehicle access control","Crowd control barriers at stage or key areas","Open or unsecured"]},
+      {id:"incidents", text:"Have you experienced any security incidents in the past 2 years?", type:"single", options:["No incidents","Minor incidents (disturbances, trespass)","Moderate incidents (assault, ejections)","Serious incidents (violence, medical emergency, police response)","Prefer not to say"]}
     ]
   },
   {
-    id:"planning",label:"Security Planning",icon:"◎",color:"#4A90D9",
+    id:"planning", label:"Security Planning", icon:"◎", color:"#4A90D9",
     questions:[
-      {id:"security_provider",text:"How do you currently source your security personnel?",type:"single",options:["We hire a licensed guard company","We use in-house staff","We use volunteers or untrained staff","We have no security personnel","We use a mix of the above"]},
-      {id:"security_management",text:"Who oversees and manages security operations during your events?",type:"single",options:["A dedicated security consultant or manager","The guard company supervisor","Our own event staff","Nobody specifically assigned"]},
-      {id:"planning_elements",text:"Which of the following are included in your current security planning?",type:"multi",options:["Written security plan","Staffing and post placement plan","Access control and credential plan","Emergency response and evacuation plan","Communication plan for security team","Pre-event security briefing for staff","None of the above"]},
-      {id:"authorities",text:"Do you coordinate with local authorities for your events?",type:"single",options:["Yes - police and emergency services are briefed","Sometimes - for larger events only","No - we handle everything internally","We are unsure of the requirements"]}
+      {id:"security_provider", text:"How do you currently source your security personnel?", type:"single", options:["We hire a licensed guard company","We use in-house staff","We use volunteers or untrained staff","We have no security personnel","We use a mix of the above"]},
+      {id:"security_management", text:"Who oversees security operations during your events?", type:"single", options:["A dedicated security consultant or manager","The guard company supervisor","Our own event staff","Nobody specifically assigned"]},
+      {id:"planning_elements", text:"Which of the following are included in your current security planning?", type:"multi", options:["Written security plan","Staffing and post placement plan","Access control and credential plan","Emergency response and evacuation plan","Communication plan for security team","Pre-event security briefing for staff","None of the above"]},
+      {id:"authorities", text:"Do you coordinate with local authorities for your events?", type:"single", options:["Yes - police and emergency services are briefed","Sometimes - for larger events only","No - we handle everything internally","We are unsure of the requirements"]}
     ]
   },
   {
-    id:"emergency",label:"Emergency Readiness",icon:"△",color:"#E0A03A",
-    questions: [
-{id:"emergency_plan",text:"Do you have a written emergency response plan?",type:"single",options:["Yes - documented and rehearsed","Yes - documented but not rehearsed","Informal - not written down","No plan exists"]},
-      {id:"evacuation",text:"Do your staff know the evacuation procedures?",type:"single",options:["Yes - all staff trained and briefed","Some staff are aware","Only management knows","No evacuation plan exists"]},
-      {id:"medical",text:"What medical and first aid provisions are in place?",type:"multi",options:["Licensed medical team on-site","First aid kits at multiple locations","Trained first aid staff","AED defibrillators on-site","Clear medical station with signage","None"]},
-      {id:"communication",text:"How does your security team communicate during an event?",type:"multi",options:["Two-way radios with assigned channels","Mobile phones","Earpieces for key personnel","No formal communication system"]}
+    id:"emergency", label:"Emergency Readiness", icon:"△", color:"#E0A03A",
+    questions:[
+      {id:"emergency_plan", text:"Do you have a written emergency response plan?", type:"single", options:["Yes - documented and rehearsed","Yes - documented but not rehearsed","Informal - not written down","No plan exists"]},
+      {id:"evacuation", text:"Do your staff know the evacuation procedures?", type:"single", options:["Yes - all staff trained and briefed","Some staff are aware","Only management knows","No evacuation plan exists"]},
+      {id:"medical", text:"What medical and first aid provisions are in place?", type:"multi", options:["Licensed medical team on-site","First aid kits at multiple locations","Trained first aid staff","AED defibrillators on-site","Clear medical station with signage","None"]},
+      {id:"communication", text:"How does your security team communicate during an event?", type:"multi", options:["Two-way radios with assigned channels","Mobile phones","Earpieces for key personnel","No formal communication system"]}
     ]
   },
-  {
-    id:"risk",label:"Risk Factors",icon:"◇",color:"#7B5EA7",
-    questions:[
-      {id:"public_profile",text:"How high profile are your events or venue?",type:"single",options:["Private - limited public exposure","Local - known in the community","Regional - significant local media attention","National or international - major public profile"]},
-      {id:"vip_presence",text:"Do your events include VIP guests or public figures?",type:"single",options:["Never","Occasionally","Frequently","Always"]},
-      {id:"risk_factors",text:"Which of the following risk factors apply?",type:"multi",options:["Alcohol served on-site","Large crowds in confined spaces","Late night or overnight events","History of incidents at similar events","Political or controversial programming","High-value equipment or assets on-site","None of the above"]},
-      {id:"biggest_concern",text:"What is your biggest security concern right now?",type:"single",options:["Crowd safety and management","Unauthorized access or gate crashing","Patron altercations or violence","Medical emergencies","Theft or property damage","Not sure where to start"]}
-    ]
-  }
-];
-let currentSection = 0;
-let answers = {};
-function showPage(id) {
-  document.getElementById('page-hero').classList.add('hidden');
-  document.getElementById('page-assessment').classList.add('hidden');
-  document.getElementById('page-results').classList.add('hidden');
-  document.getElementById(id).classList.remove('hidden');
-}
-function startAssessment() {
-  currentSection = 0;
-  answers = {};
-  showPage('page-assessment');
-  renderSection();
-}
-function restartAssessment() {
-  currentSection = 0;
-  answers = {};
-  showPage('page-hero');
-}
-function renderSection() {
-  const section = SECTIONS[currentSection];
-  const totalQ = SECTIONS.reduce((a,s) => a + s.questions.length, 0);
-  const answeredQ = Object.keys(answers).length;
-  const pct = Math.round((answeredQ / totalQ) * 100);
-  document.getElementById('progress-pct').textContent = pct + '%';
-  document.getElementById('progress-fill').style.width = pct + '%';
-  document.getElementById('section-num').textContent = 'SECTION ' + (currentSection+1) + ' OF ' + SECTIONS.length;
-  document.getElementById('section-title').textContent = section.label;
-  document.getElementById('section-title').style.color = section.color;
-  document.getElementById('section-line').style.background = section.color;
-  const tabs = document.getElementById('section-tabs');
-  tabs.innerHTML = SECTIONS.map((s,i) => {
-    const isDone = s.questions.every(q => answers[q.id]);
-    const isActive = i === currentSection;
-    let cls = 'section-tab';
-    if (isActive) cls += ' active';
-    if (isDone && !isActive) cls += ' done';
-    const color = isActive ? s.color : (isDone ? '#4CAF7D' : '');
-    return `<div class="${cls}" style="--tab-color:${s.color}">${isDone && !isActive ? '✓' : s.icon} ${s.label}</div>`;
-  }).join('');
-  const qList = document.getElementById('questions-list');
-  qList.innerHTML = section.questions.map(q => {
-    const sel = answers[q.id] || [];
-    const selArr = Array.isArray(sel) ? sel : [sel];
-    return `
-      <div class="question-card">
-        <div class="question-type-tag">${q.type === 'multi' ? '◻ Select all that apply' : '◉ Select one'}</div>
-        <div class="question-text">${q.text}</div>
-        <div class="options-grid">
-          ${q.options.map(opt => `
-            <button class="option-btn ${selArr.includes(opt) ? 'selected' : ''}"
-              style="border-color:${selArr.includes(opt) ? section.color : ''}"
-              onclick="toggleAnswer('${q.id}','${opt.replace(/'/g,"\\'")}','${q.type}','${section.color}')">
-              <span class="option-indicator ${q.type === 'single' ? 'circle' : ''}">${selArr.includes(opt) ? '✓' : ''}</span>
-              ${opt}
-            </button>`).join('')}
-        </div>
-      </div>`;
-  }).join('');
-  const canNext = section.questions.every(q => answers[q.id] && (Array.isArray(answers[q.id]) ? answers[q.id].length > 0 : true));
-  document.getElementById('btn-next').disabled = !canNext;
-  document.getElementById('btn-prev').style.visibility = currentSection === 0 ? 'hidden' : 'visible';
-  document.getElementById('btn-next').textContent = currentSection === SECTIONS.length - 1 ? 'Generate Report →' : 'Continue →';
-}
-function toggleAnswer(qid, option, type, color) {
-  if (type === 'single') {
-    answers[qid] = option;
-  } else {
-    const cur = answers[qid] || [];
-    const has = cur.includes(option);
-    if (option === 'None' && !has) { answers[qid] = ['None']; }
-    else {
-      const filtered = has ? cur.filter(x => x !== option) : [...cur.filter(x => x !== 'None'), option];
-      answers[qid] = filtered.length ? filtered : undefined;
-    }
-  }
-  renderSection();
-}
-function prevSection() {
-  if (currentSection > 0) { currentSection--; renderSection(); }
-}
-function nextSection() {
-  const section = SECTIONS[currentSection];
-  const canNext = section.questions.every(q => answers[q.id] && (Array.isArray(answers[q.id]) ? answers[q.id].length > 0 : true));
-  if (!canNext) return;
-  if (currentSection < SECTIONS.length - 1) {
-    currentSection++;
-    renderSection();
-  } else {
-    showResults();
-  }
-}
-function scoreAssessment() {
-  const risks = { planning:0, physical:0, emergency:0, overall:0 };
-  const ac = answers.access_control || [];
-  const surv = answers.surveillance || [];
-  const peri = answers.perimeter || [];
-  const inc = answers.incidents || '';
-  if (ac.includes('None')) risks.physical += 30;
-  else if (!ac.some(a => ['Ticket scanning at entry','Wristband or credential system','Security personnel at entry points'].includes(a))) risks.physical += 15;
-  if (surv.includes('None')) risks.physical += 25;
-  if (peri.includes('Open or unsecured')) risks.physical += 20;
-  if (inc.includes('Serious')) risks.physical += 25;
-  else if (inc.includes('Moderate')) risks.physical += 15;
-  else if (inc.includes('Minor')) risks.physical += 5;
-  if (answers.security_provider === 'We have no security personnel') risks.planning += 35;
-  if (answers.security_management === 'Nobody specifically assigned') risks.planning += 25;
-  const pe = answers.planning_elements || [];
-  if (pe.includes('None of the above')) risks.planning += 30;
-  else if (!pe.includes('Written security plan')) risks.planning += 15;
-  if (answers.authorities === 'No - we handle everything internally') risks.planning += 10;
-  if (answers.emergency_plan === 'No plan exists') risks.emergency += 40;
-  else if (answers.emergency_plan === 'Informal - not written down') risks.emergency += 20;
-  if (answers.evacuation === 'No evacuation plan exists') risks.emergency += 25;
-  if ((answers.medical || []).includes('None')) risks.emergency += 20;
-  if ((answers.communication || []).includes('No formal communication system')) risks.emergency += 15;
-  risks.physical = Math.min(risks.physical, 100);
-  risks.planning = Math.min(risks.planning, 100);
-  risks.emergency = Math.min(risks.emergency, 100);
-  risks.overall = Math.round((risks.physical + risks.planning + risks.emergency) / 3);
-  return risks;
-}
-function getRiskLabel(score) {
-  if (score >= 70) return { label:'HIGH RISK', color:'#E05C3A' };
-  if (score >= 40) return { label:'MODERATE RISK', color:'#E0A03A' };
-  return { label:'LOW RISK', color:'#4CAF7D' };
-}
-function getRecommendations(scores) {
-  const recs = [];
-  if (scores.physical >= 40) {
-    if ((answers.access_control||[]).includes('None')) recs.push({area:'Physical',priority:'High',text:'Implement a formal access control system at all entry points — ticket scanning, wristbands, and credential verification are essential baselines for any event.'});
-    if ((answers.surveillance||[]).includes('None')) recs.push({area:'Physical',priority:'High',text:'Install CCTV coverage at all entry, exit, and high-density areas. Monitored surveillance is one of the most effective deterrents available.'});
-    if ((answers.perimeter||[]).includes('Open or unsecured')) recs.push({area:'Physical',priority:'High',text:'Establish a defined event perimeter using barriers, fencing, and patrol routes. An unsecured perimeter creates significant liability.'});
-    if (answers.incidents && answers.incidents.includes('Serious')) recs.push({area:'Physical',priority:'High',text:'Given the history of serious incidents, a full security audit is strongly recommended before your next event.'});
-  }
-  if (scores.planning >= 30) {
-    if (answers.security_provider === 'We have no security personnel') recs.push({area:'Planning',priority:'High',text:'Engage a licensed security company for all events. Unprotected events expose organizers to significant legal and safety liability.'});
-    if (answers.security_management === 'Nobody specifically assigned') recs.push({area:'Planning',priority:'High',text:'Assign a dedicated security manager or consultant for every event. Without clear command structure, security cannot operate effectively.'});
-    if ((answers.planning_elements||[]).includes('None of the above')) recs.push({area:'Planning',priority:'High',text:'Develop a written security plan before your next event. This is required by most insurers, municipal permits, and professional guard companies.'});
-    if (!(answers.planning_elements||[]).includes('Pre-event security briefing for staff')) recs.push({area:'Planning',priority:'Medium',text:'Conduct a formal pre-event security briefing with all staff and security personnel to align on assignments and emergency procedures.'});
-  }
-  if (scores.emergency >= 30) {
-    if (answers.emergency_plan === 'No plan exists' || answers.emergency_plan === 'Informal - not written down') recs.push({area:'Emergency',priority:'High',text:'Develop a written emergency response plan covering medical emergencies, evacuation, fire, and active threat scenarios.'});
-    if (answers.evacuation === 'No evacuation plan exists' || answers.evacuation === 'Only management knows') recs.push({area:'Emergency',priority:'High',text:'Train all staff and security personnel on evacuation procedures. Every person needs to know exactly what to do without being told.'});
-    if ((answers.medical||[]).includes('None')) recs.push({area:'Emergency',priority:'High',text:'Establish minimum first aid capability — trained staff, first aid kits at multiple locations, and a clearly marked medical station.'});
-    if ((answers.communication||[]).includes('No formal communication system')) recs.push({area:'Emergency',priority:'High',text:'Implement a two-way radio system with assigned channels. Clear communication is the foundation of effective security operations.'});
-  }
-  if ((answers.threat_awareness||'').includes('No plan')) recs.push({area:'Strategy',priority:'High',text:'Commission a professional security risk assessment to establish a baseline and build a formal security plan tailored to your events and venue.'});
-  if (answers.vip_presence === 'Frequently' || answers.vip_presence === 'Always') recs.push({area:'Planning',priority:'Medium',text:'Events featuring VIP guests or public figures require dedicated access control and on-site security management. Standard guard coverage is not sufficient.'});
-  return recs;
-}
-function showResults() {
-  const scores = scoreAssessment();
-  const overall = getRiskLabel(scores.overall);
-  const recs = getRecommendations(scores);
-  const now = new Date().toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'});
-  document.getElementById('results-meta').innerHTML = `
-    <span class="meta-item">GENERATED: ${now}</span>
-    <span class="meta-item">SECTIONS ASSESSED: 5</span>
-    <span class="meta-item">RECOMMENDATIONS: ${recs.length}</span>`;
-  const circ = 2 * Math.PI * 55;
-  const fill = (scores.overall / 100) * circ;
-  document.getElementById('ring-fill').setAttribute('stroke', overall.color);
-  document.getElementById('ring-fill').setAttribute('stroke-dasharray', fill + ' ' + circ);
-  document.getElementById('score-big').textContent = scores.overall;
-  document.getElementById('score-big').style.color = overall.color;
-  document.getElementById('overall-label').textContent = 'Overall: ' + overall.label;
-  document.getElementById('overall-label').style.color = overall.color;
-  document.getElementById('overall-desc').textContent = scores.overall >= 70
-    ? 'Significant security gaps exist across multiple areas. Immediate professional consultation is strongly recommended.'
-    : scores.overall >= 40
-    ? 'Moderate risk levels indicate meaningful security gaps. A structured improvement plan should be developed and prioritized.'
-    : 'Your current security posture shows a reasonable baseline. Continued review and optimization will maintain your protection.';
-  const areas = [
-    {label:'Physical Security',icon:'⬡',score:scores.physical,color:'#E05C3A'},
-    {label:'Security Planning',icon:'◎',score:scores.planning,color:'#4A90D9'},
-    {label:'Emergency Readiness',icon:'△',score:scores.emergency,color:'#E0A03A'}
-  ];
-  document.getElementById('risk-grid').innerHTML = areas.map(a => {
-    const rl = getRiskLabel(a.score);
-    return `<div class="risk-card">
-      <div class="risk-card-header">
-        <span style="color:${a.color};font-size:1rem">${a.icon}</span>
-        <span class="risk-card-label">${a.label}</span>
-      </div>
-      <div class="risk-score-num" style="color:${a.color}">${a.score}</div>
-      <div class="risk-badge" style="color:${rl.color};border-color:${rl.color}">${rl.label}</div>
-      <div class="risk-bar-track"><div class="risk-bar-fill" style="width:${a.score}%;background:${a.color}"></div></div>
-    </div>`;
-  }).join('');
-  document.getElementById('recs-list').innerHTML = recs.length === 0
-    ? '<p style="color:rgba(232,228,220,0.4);font-style:italic">No critical gaps identified. Continue regular security reviews.</p>'
-    : recs.map(r => {
-        const color = r.priority === 'High' ? '#E05C3A' : r.priority === 'Medium' ? '#E0A03A' : '#4A90D9';
-        return `<div class="rec-item" style="border-color:${color}">
-          <div class="rec-meta">
-            <div class="rec-area">${r.area}</div>
-            <div class="rec-priority" style="color:${color}">${r.priority}</div>
-          </div>
-          <div class="rec-text">${r.text}</div>
-        </div>`;
-      }).join('');
-  showPage('page-results');
-}
-async function submitForm(e) {
-  e.preventDefault();
-  const scores = scoreAssessment();
-  const overall = getRiskLabel(scores.overall);
-  const recs = getRecommendations(scores);
-  const recText = recs.map(r => '[' + r.priority + ' - ' + r.area + '] ' + r.text).join('\n\n');
-  const name = document.getElementById('f-name').value;
-  const org = document.getElementById('f-org').value;
-  const email = document.getElementById('f-email').value;
-  const phone = document.getElementById('f-phone').value || 'Not provided';
-  try {
-    const response = await fetch(FORMSPREE, {
-      method:'POST',
-      headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body: JSON.stringify({
-        name, organization:org, email, phone,
-        overall_score: scores.overall + '/100',
-        overall_risk: overall.label,
-        physical_score: scores.physical + '/100',
-        planning_score: scores.planning + '/100',
-        emergency_score: scores.emergency + '/100',
-        biggest_concern: answers.biggest_concern || 'Not specified',
-        org_type: answers.org_type || 'Not specified',
-        recommendations: recText,
-        _subject: 'Vantage Risk Assessment - ' + org + ' - Score: ' + scores.overall + '/100'
-      })
-    });
-    const data = await response.json();
-    console.log('Formspree response:', data);
-    if (response.ok) {
-      document.getElementById('form-container').classList.add('hidden');
-      document.getElementById('form-success').classList.remove('hidden');
-    } else {
-      alert('Submission error: ' + JSON.stringify(data));
-    }
-  } catch(err) {
-    console.error('Fetch error:', err);
-    alert('Network error: ' + err.message);
-  }
-}
-  });
-  document.getElementById('form-container').classList.add('hidden');
-  document.getElementById('form-success').classList.remove('hidden');
-}
-</script>
-</body>
-</html>
