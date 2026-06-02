@@ -468,21 +468,36 @@ async function submitForm(e) {
   const org = document.getElementById('f-org').value;
   const email = document.getElementById('f-email').value;
   const phone = document.getElementById('f-phone').value || 'Not provided';
-  await fetch(FORMSPREE, {
-    method:'POST',
-    headers:{'Content-Type':'application/json','Accept':'application/json'},
-    body: JSON.stringify({
-      name, organization:org, email, phone,
-      overall_score: scores.overall + '/100',
-      overall_risk: overall.label,
-      physical_score: scores.physical + '/100',
-      planning_score: scores.planning + '/100',
-      emergency_score: scores.emergency + '/100',
-      biggest_concern: answers.biggest_concern || 'Not specified',
-      org_type: answers.org_type || 'Not specified',
-      recommendations: recText,
-      _subject: 'Vantage Risk Assessment - ' + org + ' - Score: ' + scores.overall + '/100'
-    })
+  try {
+    const response = await fetch(FORMSPREE, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify({
+        name, organization:org, email, phone,
+        overall_score: scores.overall + '/100',
+        overall_risk: overall.label,
+        physical_score: scores.physical + '/100',
+        planning_score: scores.planning + '/100',
+        emergency_score: scores.emergency + '/100',
+        biggest_concern: answers.biggest_concern || 'Not specified',
+        org_type: answers.org_type || 'Not specified',
+        recommendations: recText,
+        _subject: 'Vantage Risk Assessment - ' + org + ' - Score: ' + scores.overall + '/100'
+      })
+    });
+    const data = await response.json();
+    console.log('Formspree response:', data);
+    if (response.ok) {
+      document.getElementById('form-container').classList.add('hidden');
+      document.getElementById('form-success').classList.remove('hidden');
+    } else {
+      alert('Submission error: ' + JSON.stringify(data));
+    }
+  } catch(err) {
+    console.error('Fetch error:', err);
+    alert('Network error: ' + err.message);
+  }
+}
   });
   document.getElementById('form-container').classList.add('hidden');
   document.getElementById('form-success').classList.remove('hidden');
