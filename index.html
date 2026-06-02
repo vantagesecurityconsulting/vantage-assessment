@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Security Risk Assessment — Vantage Security Consulting</title>
+<link href="[fonts.googleapis.com](https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&display=swap)" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#0D1117;color:#E8E4DC;font-family:'Montserrat',sans-serif;min-height:100vh}
+.app{min-height:100vh;background:#0D1117}
+.header{border-bottom:1px solid rgba(201,168,76,0.2);padding:1.5rem 2.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(13,17,23,0.97);backdrop-filter:blur(12px);z-index:100}
+.logo{display:flex;align-items:baseline;gap:0.75rem}
+.logo-name{font-size:1.6rem;font-weight:800;letter-spacing:0.2em;color:#C9A84C;line-height:1}
+.logo-sep{width:1px;height:1.2rem;background:rgba(201,168,76,0.4);align-self:center}
+.logo-tag{font-size:0.65rem;letter-spacing:0.2em;color:rgba(201,168,76,0.6);text-transform:uppercase;font-weight:600}
+.header-right{font-size:0.65rem;color:rgba(232,228,220,0.3);letter-spacing:0.15em;font-weight:600;text-transform:uppercase}
+.hero{padding:5rem 2.5rem 3rem;max-width:900px;margin:0 auto;text-align:center}
+.hero-eyebrow{font-size:0.7rem;letter-spacing:0.3em;color:#C9A84C;text-transform:uppercase;margin-bottom:1.5rem;font-weight:700}
+.hero-title{font-size:clamp(2.5rem,7vw,4.5rem);font-weight:800;line-height:1.05;color:#E8E4DC;margin-bottom:1.5rem;text-transform:uppercase}
+.hero-title span{color:#C9A84C}
+.hero-desc{font-size:1rem;color:rgba(232,228,220,0.55);max-width:540px;margin:0 auto 3rem;line-height:1.8;font-weight:300}
+.hero-stats{display:flex;justify-content:center;gap:3rem;margin-bottom:3rem}
+.stat{text-align:center}
+.stat-num{font-size:2.2rem;font-weight:800;color:#C9A84C;line-height:1}
+.stat-label{font-size:0.65rem;color:rgba(232,228,220,0.4);letter-spacing:0.15em;text-transform:uppercase;margin-top:0.25rem;font-weight:600}
+.btn-primary{background:#C9A84C;color:#0D1117;border:none;padding:1rem 2.5rem;font-family:'Montserrat',sans-serif;font-size:0.8rem;letter-spacing:0.2em;text-transform:uppercase;cursor:pointer;font-weight:700;transition:all 0.2s}
+.btn-primary:hover{background:#D9BC85;transform:translateY(-2px)}
+.btn-primary:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.btn-ghost{background:transparent;color:rgba(232,228,220,0.5);border:1px solid rgba(232,228,220,0.15);padding:0.75rem 1.75rem;font-family:'Montserrat',sans-serif;font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;font-weight:600}
+.btn-ghost:hover{color:#E8E4DC;border-color:rgba(232,228,220,0.35)}
+.assessment{max-width:860px;margin:0 auto;padding:2rem 2.5rem 4rem}
+.progress-bar-wrap{margin-bottom:3rem}
+.progress-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem}
+.progress-label{font-size:0.65rem;letter-spacing:0.15em;color:rgba(232,228,220,0.4);text-transform:uppercase;font-weight:600}
+.progress-pct{font-size:1.2rem;font-weight:800;color:#C9A84C}
+.progress-track{height:3px;background:rgba(232,228,220,0.08)}
+.progress-fill{height:100%;background:linear-gradient(90deg,#1B2A4A,#C9A84C);transition:width 0.4s ease}
+.section-tabs{display:flex;gap:0.5rem;margin-bottom:2.5rem;flex-wrap:wrap}
+.section-tab{padding:0.4rem 0.9rem;font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;border:1px solid rgba(232,228,220,0.1);background:transparent;color:rgba(232,228,220,0.3);display:flex;align-items:center;gap:0.4rem;font-weight:600}
+.section-tab.active{color:var(--tab-color);border-color:var(--tab-color);background:rgba(255,255,255,0.03)}
+.section-tab.done{border-color:rgba(76,175,125,0.4);color:rgba(76,175,125,0.7)}
+.section-header{margin-bottom:2.5rem}
+.section-num{font-size:0.6rem;letter-spacing:0.25em;color:rgba(232,228,220,0.25);margin-bottom:0.5rem;font-weight:600;text-transform:uppercase}
+.section-title{font-size:2.5rem;font-weight:800;line-height:1;text-transform:uppercase}
+.section-line{width:3rem;height:3px;margin-top:1rem}
+.questions-list{display:flex;flex-direction:column;gap:2rem}
+.question-card{border:1px solid rgba(232,228,220,0.07);padding:1.75rem;background:rgba(232,228,220,0.02)}
+.question-type-tag{display:inline-block;font-size:0.58rem;letter-spacing:0.2em;color:rgba(201,168,76,0.5);text-transform:uppercase;margin-bottom:0.75rem;font-weight:600}
+.question-text{font-size:0.95rem;font-weight:600;color:#E8E4DC;margin-bottom:1.25rem;line-height:1.5}
+.options-grid{display:flex;flex-direction:column;gap:0.5rem}
+.option-btn{display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1rem;background:transparent;border:1px solid rgba(232,228,220,0.1);color:rgba(232,228,220,0.6);cursor:pointer;text-align:left;font-family:'Montserrat',sans-serif;font-size:0.875rem;font-weight:400;transition:all 0.15s;width:100%}
+.option-btn:hover{border-color:rgba(232,228,220,0.25);color:#E8E4DC;background:rgba(232,228,220,0.03)}
+.option-btn.selected{color:#E8E4DC;background:rgba(201,168,76,0.06)}
+.option-indicator{width:16px;height:16px;border:1px solid currentColor;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.6rem}
+.option-indicator.circle{border-radius:50%}
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:3rem;padding-top:2rem;border-top:1px solid rgba(232,228,220,0.08)}
+.results{max-width:900px;margin:0 auto;padding:2rem 2.5rem 5rem}
+.results-header{margin-bottom:3rem;padding-bottom:2rem;border-bottom:1px solid rgba(232,228,220,0.1)}
+.results-eyebrow{font-size:0.65rem;letter-spacing:0.25em;color:rgba(201,168,76,0.6);text-transform:uppercase;margin-bottom:0.75rem;font-weight:600}
+.results-title{font-size:3.5rem;font-weight:800;line-height:1;color:#E8E4DC;text-transform:uppercase}
+.results-meta{display:flex;gap:2rem;margin-top:1.5rem;flex-wrap:wrap}
+.meta-item{font-size:0.7rem;color:rgba(232,228,220,0.35);letter-spacing:0.1em;font-weight:600;text-transform:uppercase}
+.overall-card{background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);padding:2.5rem;margin-bottom:2rem;display:flex;align-items:center;gap:3rem}
+.overall-score-ring{position:relative;width:120px;height:120px;flex-shrink:0}
+.overall-score-num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-big{font-size:2.8rem;font-weight:800;line-height:1}
+.score-denom{font-size:0.6rem;color:rgba(201,168,76,0.5);font-weight:600}
+.overall-info h3{font-size:1.6rem;font-weight:800;margin-bottom:0.5rem}
+.overall-info p{font-size:0.88rem;color:rgba(232,228,220,0.5);line-height:1.65;max-width:480px}
+.risk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2.5rem}
+.risk-card{border:1px solid rgba(232,228,220,0.08);padding:1.5rem;background:rgba(232,228,220,0.02)}
+.risk-card-header{display:flex;align-items:center;gap:0.5rem;margin-bottom:1.25rem}
+.risk-card-label{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(232,228,220,0.4);font-weight:600}
+.risk-score-num{font-size:3rem;font-weight:800;line-height:1;margin-bottom:0.25rem}
+.risk-badge{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.2rem 0.5rem;border:1px solid currentColor;display:inline-block;margin-bottom:1rem;font-weight:600}
+.risk-bar-track{height:3px;background:rgba(232,228,220,0.08)}
+.risk-bar-fill{height:100%}
+.recs-section{margin-top:2.5rem}
+.recs-title{font-size:1.8rem;font-weight:800;margin-bottom:0.5rem;text-transform:uppercase}
+.recs-sub{font-size:0.85rem;color:rgba(232,228,220,0.4);margin-bottom:1.75rem;letter-spacing:0.05em;font-weight:600;text-transform:uppercase}
+.rec-item{display:flex;gap:1.25rem;padding:1.25rem 1.5rem;border-left:2px solid;margin-bottom:0.75rem;background:rgba(232,228,220,0.02);align-items:flex-start}
+.rec-meta{flex-shrink:0;min-width:80px}
+.rec-area{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:rgba(232,228,220,0.4);font-weight:600}
+.rec-priority{font-size:0.65rem;font-weight:700;letter-spacing:0.1em;margin-top:0.2rem;text-transform:uppercase}
+.rec-text{font-size:0.9rem;color:rgba(232,228,220,0.75);line-height:1.6;padding-top:0.1rem}
+.cta-section{margin-top:3rem;padding:2.5rem;border:1px solid rgba(201,168,76,0.2);background:rgba(201,168,76,0.03)}
+.cta-text h4{font-size:1.8rem;font-weight:800;color:#C9A84C;margin-bottom:0.4rem;text-transform:uppercase}
+.cta-text p{font-size:0.85rem;color:rgba(232,228,220,0.45);max-width:400px;line-height:1.6;margin-bottom:1.5rem}
+.form-grid{display:flex;flex-direction:column;gap:0.75rem;max-width:480px}
+.form-input{padding:0.75rem 1rem;background:transparent;border:1px solid rgba(232,228,220,0.15);border-left:3px solid #C9A84C;color:#E8E4DC;font-family:'Montserrat',sans-serif;font-size:0.85rem;outline:none;width:100%}
+.success-box{padding:1.5rem;border:1px solid #C9A84C;background:rgba(201,168,76,0.05);max-width:480px}
+.success-box p:first-child{font-size:0.9rem;color:#C9A84C;font-weight:700;margin-bottom:0.5rem}
+.success-box p:last-child{font-size:0.85rem;color:rgba(232,228,220,0.6);line-height:1.7}
+.hidden{display:none}
+@media(max-width:640px){
+  .risk-grid{grid-template-columns:1fr}
+  .overall-card{flex-direction:column;gap:1.5rem}
+  .hero-stats{gap:1.5rem}
+  .hero{padding:3rem 1.5rem 2rem}
+  .assessment,.results{padding:1.5rem 1.25rem 3rem}
+  .header{padding:1rem 1.25rem}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="header">
+    <div class="logo">
+      <div class="logo-name">VANTAGE</div>
+      <div class="logo-sep"></div>
+      <div class="logo-tag">Free Security Risk Assessment</div>
+    </div>
+    <div class="header-right">Vantage Security Consulting</div>
+  </header>
+  <!-- HERO PAGE -->
+  <div id="page-hero">
+    <div class="hero">
+      <div class="hero-eyebrow">&#9672; Vantage Security Consulting</div>
+      <h1 class="hero-title">Know Your<br><span>Risk Profile</span></h1>
+      <p class="hero-desc">A free comprehensive security assessment across physical security, security planning, and emergency readiness — tailored for your specific event or venue.</p>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">5</div><div class="stat-label">Assessment Sections</div></div>
+        <div class="stat"><div class="stat-num">20</div><div class="stat-label">Risk Indicators</div></div>
+        <div class="stat"><div class="stat-num">~8</div><div class="stat-label">Minutes to Complete</div></div>
+      </div>
+      <button class="btn-primary" onclick="startAssessment()">Begin Assessment &rarr;</button>
+    </div>
+  </div>
+  <!-- ASSESSMENT PAGE -->
+  <div id="page-assessment" class="hidden">
+    <div class="assessment">
+      <div class="progress-bar-wrap">
+        <div class="progress-meta">
+          <span class="progress-label">Assessment Progress</span>
+          <span class="progress-pct" id="progress-pct">0%</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      </div>
+      <div class="section-tabs" id="section-tabs"></div>
+      <div class="section-header">
+        <div class="section-num" id="section-num"></div>
+        <div class="section-title" id="section-title"></div>
+        <div class="section-line" id="section-line"></div>
+      </div>
+      <div class="questions-list" id="questions-list"></div>
+      <div class="nav-row">
+        <button class="btn-ghost" id="btn-prev" onclick="prevSection()">&#8592; Previous</button>
+        <button class="btn-primary" id="btn-next" onclick="nextSection()">Continue &rarr;</button>
+      </div>
+    </div>
+  </div>
+  <!-- RESULTS PAGE -->
+  <div id="page-results" class="hidden">
+    <div class="results">
+      <div class="results-header">
+        <div class="results-eyebrow">&#9672; Assessment Complete &mdash; Confidential Report</div>
+        <div class="results-title">Security Risk Report</div>
+        <div class="results-meta" id="results-meta"></div>
+      </div>
+      <div class="overall-card" id="overall-card">
+        <div class="overall-score-ring">
+          <svg id="ring-svg" width="120" height="120" style="transform:rotate(-90deg)">
+            <circle cx="60" cy="60" r="55" fill="none" stroke="rgba(232,228,220,0.06)" stroke-width="5"/>
+            <circle id="ring-fill" cx="60" cy="60" r="55" fill="none" stroke="#C9A84C" stroke-width="5" stroke-dasharray="0 345.4"/>
+          </svg>
+          <div class="overall-score-num">
+            <div class="score-big" id="score-big">0</div>
+            <div class="score-denom">/100</div>
+          </div>
+        </div>
+        <div class="overall-info">
+          <h3 id="overall-label"></h3>
+          <p id="overall-desc"></p>
+        </div>
+      </div>
+      <div class="risk-grid" id="risk-grid"></div>
+      <div class="recs-section">
+        <div class="recs-title">Recommendations</div>
+        <div class="recs-sub">Prioritized action items based on your assessment responses</div>
+        <div id="recs-list"></div>
+      </div>
+      <div class="cta-section">
+        <div class="cta-text">
+          <h4>Get Your Full Security Consultation</h4>
+          <p>Enter your details below and we will be in touch within 24 hours to discuss your results and how Vantage can help.</p>
+        </div>
+        <div id="form-container">
+          <form class="form-grid" onsubmit="submitForm(event)">
+            <input class="form-input" type="text" id="f-name" placeholder="Your Name *" required>
+            <input class="form-input" type="text" id="f-org" placeholder="Organization / Event Name *" required>
+            <input class="form-input" type="email" id="f-email" placeholder="Email Address *" required>
+            <input class="form-input" type="tel" id="f-phone" placeholder="Phone (Optional)">
+            <button type="submit" class="btn-primary">Send Me My Results &rarr;</button>
+          </form>
+        </div>
+        <div id="form-success" class="success-box hidden">
+          <p>&#10003; RECEIVED</p>
+          <p>Thank you. We will review your assessment and be in touch within 24 hours.</p>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:2rem">
+        <button class="btn-ghost" onclick="restartAssessment()">Retake Assessment</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const FORMSPREE = "[formspree.io](https://formspree.io/f/maqzwwre)";
+const SECTIONS = [
+  {
+    id:"profile",label:"Client Profile",icon:"◈",color:"#C9A84C",
+    questions:[
+      {id:"org_type",text:"What type of organization are you?",type:"single",options:["Festival or Live Event Organizer","Concert or Entertainment Promoter","Sports Organization or Venue","Corporate Event Organizer","Venue or Arena Operator","Municipal or Government Organization","Other"]},
+      {id:"size",text:"How many people attend your typical event or use your venue?",type:"single",options:["Under 100","100-500","500-2,000","2,000-10,000","10,000+"]},
+      {id:"frequency",text:"How often do you host events or operate your venue?",type:"single",options:["One-time event","A few times per year","Monthly","Weekly or more","Ongoing permanent venue"]},
+      {id:"threat_awareness",text:"Do you currently have a written security plan?",type:"single",options:["No plan at all","Basic informal plan","Documented but outdated","Current and reviewed regularly"]}
+    ]
+  },
+  {
+    id:"physical",label:"Physical Security",icon:"⬡",color:"#E05C3A",
+    questions:[
+      {id:"access_control",text:"What access control measures are currently in place at your event or venue?",type:"multi",options:["Ticket scanning at entry","Wristband or credential system","Dedicated VIP or restricted area access","Security personnel at entry points","Bag search or screening","None"]},
+      {id:"surveillance",text:"What surveillance systems do you have in place?",type:"multi",options:["CCTV cameras on-site","Monitored CCTV during events","Security lighting","Alarm systems","None"]},
+      {id:"perimeter",text:"How is your event perimeter or venue exterior managed?",type:"multi",options:["Fencing or barriers","Security guards on patrol","Vehicle access control","Crowd control barriers at stage or key areas","Open or unsecured"]},
+      {id:"incidents",text:"Have you experienced any security incidents at your events or venue in the past 2 years?",type:"single",options:["No incidents","Minor incidents (disturbances, trespass)","Moderate incidents (assault, ejections)","Serious incidents (violence, medical emergency, police response)","Prefer not to say"]}
+    ]
+  },
+  {
+    id:"planning",label:"Security Planning",icon:"◎",color:"#4A90D9",
+    questions:[
+      {id:"security_provider",text:"How do you currently source your security personnel?",type:"single",options:["We hire a licensed guard company","We use in-house staff","We use volunteers or untrained staff","We have no security personnel","We use a mix of the above"]},
+      {id:"security_management",text:"Who oversees and manages security operations during your events?",type:"single",options:["A dedicated security consultant or manager","The guard company supervisor","Our own event staff","Nobody specifically assigned"]},
+      {id:"planning_elements",text:"Which of the following are included in your current security planning?",type:"multi",options:["Written security plan","Staffing and post placement plan","Access control and credential plan","Emergency response and evacuation plan","Communication plan for security team","Pre-event security briefing for staff","None of the above"]},
+      {id:"authorities",text:"Do you coordinate with local authorities for your events?",type:"single",options:["Yes - police and emergency services are briefed","Sometimes - for larger events only","No - we handle everything internally","We are unsure of the requirements"]}
+    ]
+  },
+  {
+    id:"emergency",label:"Emergency Readiness",icon:"△",color:"#E0A03A",
+    questions:
